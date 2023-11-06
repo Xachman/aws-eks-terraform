@@ -20,11 +20,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: worspress1
+  name: wordpress1
   namespace: amber
 spec:
   selector:
-    app.kubernetes.io/name: wordpress1
+    app: wordpress1
   ports:
     - protocol: TCP
       port: 80
@@ -54,3 +54,10 @@ spec:
         image: wordpress
         ports:
         - containerPort: 80
+        env:
+            - name: DB_HOST
+              value: mysql
+            - name: DB_USER
+              value: root
+            - name: DB_PASS
+              value: secretword

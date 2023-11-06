@@ -69,8 +69,9 @@ module "eks" {
       labels = {
         env = "amber"
       }
-    amber = {
-      name = ""
+    }
+    russet = {
+      name = "russet"
 
       instance_types = ["t3.small"]
 
@@ -78,7 +79,7 @@ module "eks" {
       max_size     = 3
       desired_size = 2
       labels = {
-        env = "amber"
+        env = "russet"
       }
     }
 

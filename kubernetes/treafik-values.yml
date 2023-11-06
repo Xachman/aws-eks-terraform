@@ -1,0 +1,4 @@
+---
+nodeSelector:
+  env: russet
+namespace: russet
