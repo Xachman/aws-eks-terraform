@@ -5,10 +5,15 @@ metadata:
   name: wordpress1-ingress
   namespace: amber
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    cert-manager.io/issuer: "staging-issuer"
 spec:
+  tls:
+   - hosts:
+       - wordpress1.eks.zacharyironside.com
+     secretName: wordpress1-ingress-cert
   rules:
-    - host: wordpress1.example.net
+    - host: wordpress1.eks.zacharyironside.com
       http:
         paths:
           - path: /
