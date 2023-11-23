@@ -6,7 +6,7 @@ metadata:
   namespace: amber
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
-    cert-manager.io/issuer: "staging-issuer"
+    cert-manager.io/cluster-issuer: "staging-issuer"
 spec:
   tls:
    - hosts:
