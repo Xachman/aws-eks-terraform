@@ -11,6 +11,26 @@ spec:
       storage: 10Gi
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-init
+data:
+  init.sql: |
+    CREATE USER 'wordpress1'@'%' IDENTIFIED BY 'secretword';
+    CREATE DATABASE wordpress1;
+    GRANT ALL PRIVILEGES ON wordpress1.* TO 'wordpress1'@'%';
+
+    CREATE USER 'wordpress2'@'%' IDENTIFIED BY 'secretword';
+    CREATE DATABASE wordpress2;
+    GRANT ALL PRIVILEGES ON wordpress2.* TO 'wordpress2'@'%';
+
+    CREATE USER 'wordpress3'@'%' IDENTIFIED BY 'secretword';
+    CREATE DATABASE wordpress3;
+    GRANT ALL PRIVILEGES ON wordpress3.* TO 'wordpress3'@'%';
+
+    FLUSH PRIVILEGES;
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: mysql
@@ -50,7 +70,12 @@ spec:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
               subPath: data
+            - name: init
+              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
             claimName: mysql-pvc
+        - name: init
+          configMap:
+            name: database-init

@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: wordpress1-ingress
+  name: wordpress3-ingress
   namespace: amber
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
@@ -10,28 +10,28 @@ metadata:
 spec:
   tls:
    - hosts:
-       - wordpress1.eks.zacharyironside.com
-     secretName: wordpress1-ingress-cert
+       - wordpress3.eks.zacharyironside.com
+     secretName: wordpress3-ingress-cert
   rules:
-    - host: wordpress1.eks.zacharyironside.com
+    - host: wordpress3.eks.zacharyironside.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name:  wordpress1
+                name:  wordpress3
                 port:
                   number: 80
 --- 
 apiVersion: v1
 kind: Service
 metadata:
-  name: wordpress1
+  name: wordpress3
   namespace: amber
 spec:
   selector:
-    app: wordpress1
+    app: wordpress3
   ports:
     - protocol: TCP
       port: 80
@@ -40,22 +40,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wordpress1
+  name: wordpress3
   namespace: amber
   labels:
-    app: wordpress1
+    app: wordpress3
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: wordpress1
+      app: wordpress3
   template:
     metadata:
       labels:
-        app: wordpress1
+        app: wordpress3
     spec:
       containers:
-      - name: wordpress1
+      - name: wordpress3
         image: wordpress
         ports:
         - containerPort: 80
@@ -63,6 +63,6 @@ spec:
             - name: DB_HOST
               value: mysql.default
             - name: DB_USER
-              value: wordpress1
+              value: wordpress3
             - name: DB_PASS
               value: secretword
