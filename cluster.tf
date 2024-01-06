@@ -23,11 +23,9 @@ module "vpc" {
   cidr = "10.50.0.0/16"
   azs  = slice(data.aws_availability_zones.available.names, 0, 3)
 
-  private_subnets = ["10.50.1.0/24", "10.50.2.0/24", "10.50.3.0/24"]
   public_subnets  = ["10.50.4.0/24", "10.50.5.0/24", "10.50.6.0/24"]
-
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
+ 
+  map_public_ip_on_launch = true
   enable_dns_hostnames = true
 
   public_subnet_tags = {
@@ -49,7 +47,7 @@ module "eks" {
   cluster_version = "1.28"
 
   vpc_id                         = module.vpc.vpc_id
-  subnet_ids                     = module.vpc.private_subnets
+  subnet_ids                     = module.vpc.public_subnets
   cluster_endpoint_public_access = true
 
   eks_managed_node_group_defaults = {
@@ -63,9 +61,9 @@ module "eks" {
 
       instance_types = ["t3.small"]
 
-      min_size     = 1
-      max_size     = 3
       desired_size = 2
+      max_size     = 4
+      min_size     = 1
       labels = {
         env = "amber"
       }
