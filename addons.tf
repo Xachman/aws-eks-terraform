@@ -12,12 +12,13 @@ module "eks_blueprints_addons" {
       most_recent = true
     }
     vpc-cni = {
-      most_recent = true
+      # most_recent = true
+      version = "v1.19.3-eksbuild.1"
       configuration_values = jsonencode({
-        env = {
-          ENABLE_PREFIX_DELEGATION = "true"
-          WARM_PREFIX_TARGET       = "1"
-        }
+       env = {
+         ENABLE_PREFIX_DELEGATION = "true"
+         WARM_PREFIX_TARGET       = "1"
+       }
       })
     }
     kube-proxy = {
@@ -31,3 +32,4 @@ module "eks_blueprints_addons" {
     Environment = "dev"
   }
 }
+

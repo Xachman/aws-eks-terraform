@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tail-logger
+  labels:
+    app: tail-logger
+spec:
+  replicas: 100
+  selector:
+    matchLabels:
+      app: tail-logger
+  template:
+    metadata:
+      labels:
+        app: tail-logger
+    spec:
+      nodeSelector:
+        env: cyan
+      containers:
+      - name: tail-container
+        image: busybox
+        command: ["tail", "-f", "/dev/null"]

@@ -49,11 +49,14 @@ spec:
   selector:
     matchLabels:
       app: wordpress1
+
   template:
     metadata:
       labels:
         app: wordpress1
     spec:
+      nodeSelector:
+        env: amber
       containers:
       - name: wordpress1
         image: wordpress

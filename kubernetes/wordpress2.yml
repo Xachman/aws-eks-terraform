@@ -54,6 +54,8 @@ spec:
       labels:
         app: wordpress2
     spec:
+      nodeSelector:
+        env: amber
       containers:
       - name: wordpress2
         image: wordpress

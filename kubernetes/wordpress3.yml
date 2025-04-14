@@ -54,6 +54,8 @@ spec:
       labels:
         app: wordpress3
     spec:
+      nodeSelector:
+        env: amber
       containers:
       - name: wordpress3
         image: wordpress

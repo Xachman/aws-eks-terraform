@@ -13,9 +13,11 @@ nodeSelector:
 service:
   enabled: true
   type: LoadBalancer
-  # Additional annotations applied to both TCP and UDP services (e.g. for cloud provider specific config)
-  annotations: 
+  annotations:
+    # Specify the load balancer scheme as internet-facing to create a public-facing Network Load Balancer (NLB)
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+  # Additional annotations applied to both TCP and UDP services (e.g. for cloud provider specific config)
   # Additional annotations for TCP service only
   annotationsTCP: {}
   # Additional annotations for UDP service only

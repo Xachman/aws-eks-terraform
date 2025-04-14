@@ -80,6 +80,24 @@ module "eks" {
         env = "russet"
       }
     }
+    cyan = {
+      instance_types = ["t3.small"]
+      min_size = 1
+      desired_size = 1
+      labels = {
+        env = "cyan"
+      }
+      pre_bootstrap_user_data = <<-EOT
+        #!/bin/bash
+        set -ex
+        cat <<-EOF > /etc/profile.d/bootstrap.sh
+        export USE_MAX_PODS=false
+        export KUBELET_EXTRA_ARGS="--max-pods=110"
+        EOF
+        # Source extra environment variables in bootstrap script
+        sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+        EOT
+    }
 
   }
 }
