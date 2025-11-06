@@ -4,6 +4,9 @@ resource "helm_release" "traefik" {
   chart      = "traefik"
   namespace  = "traefik"
   create_namespace = true
+  version = "v37.1.1"
+  # old version = "v32.1.1" 
+  # new version = "v37.1.1" 
 
   values = [<<EOF
 ---
@@ -41,7 +44,7 @@ logs:
     # format: json
     # By default, the level is set to ERROR.
     # -- Alternative logging levels are DEBUG, PANIC, FATAL, ERROR, WARN, and INFO.
-    level: DEBUG
+    level: INFO 
 EOF
   ]
   depends_on = [module.eks]
@@ -68,28 +71,28 @@ EOF
   depends_on = [module.eks]
 }
 
-resource "kubernetes_manifest" "staging_issuer" {
-  manifest = {
-    apiVersion = "cert-manager.io/v1"
-    kind       = "ClusterIssuer"
-    metadata = {
-      name      = "staging-issuer"
-    }
-    spec = {
-      acme = {
-        server = "https://acme-staging-v02.api.letsencrypt.org/directory"
-        privateKeySecretRef = {
-          name = "staging-issuer-account-key"
-        }
-        solvers = [{
-          http01 = {
-            ingress = {
-              ingressClassName = "traefik"
-            }
-          }
-        }]
-      }
-    }
-  }
-  depends_on = [ helm_release.cert_manager ]
-}
+# resource "kubernetes_manifest" "staging_issuer" {
+#   manifest = {
+#     apiVersion = "cert-manager.io/v1"
+#     kind       = "ClusterIssuer"
+#     metadata = {
+#       name      = "staging-issuer"
+#     }
+#     spec = {
+#       acme = {
+#         server = "https://acme-staging-v02.api.letsencrypt.org/directory"
+#         privateKeySecretRef = {
+#           name = "staging-issuer-account-key"
+#         }
+#         solvers = [{
+#           http01 = {
+#             ingress = {
+#               ingressClassName = "traefik"
+#             }
+#           }
+#         }]
+#       }
+#     }
+#   }
+#   depends_on = [ helm_release.cert_manager ]
+# }

@@ -6,7 +6,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "EKS-Cluster"
+  cluster_name = "EKS-Cluster-Testing"
 }
 
 resource "random_string" "suffix" {
@@ -21,7 +21,7 @@ module "vpc" {
   name = "EKS-vpc"
 
   cidr = "10.50.0.0/16"
-  azs  = slice(data.aws_availability_zones.available.names, 0, 3)
+  azs  = slice(data.aws_availability_zones.available.names, 0, 2)
 
   public_subnets  = ["10.50.4.0/24", "10.50.5.0/24", "10.50.6.0/24"]
  
@@ -44,14 +44,14 @@ module "eks" {
   version = "19.15.3"
 
   cluster_name    = local.cluster_name
-  cluster_version = "1.28"
+  cluster_version = "1.32"
 
   vpc_id                         = module.vpc.vpc_id
   subnet_ids                     = module.vpc.public_subnets
   cluster_endpoint_public_access = true
 
   eks_managed_node_group_defaults = {
-    ami_type = "AL2_x86_64"
+    ami_type = "AL2023_x86_64_STANDARD"
 
   }
 
@@ -61,7 +61,7 @@ module "eks" {
 
       instance_types = ["t3.small"]
 
-      desired_size = 2
+      desired_size = 1
       max_size     = 4
       min_size     = 1
       labels = {
@@ -73,30 +73,12 @@ module "eks" {
 
       instance_types = ["t3.small"]
 
-      min_size     = 1
+      min_size     = 2
       max_size     = 3
       desired_size = 2
       labels = {
         env = "russet"
       }
-    }
-    cyan = {
-      instance_types = ["t3.small"]
-      min_size = 1
-      desired_size = 1
-      labels = {
-        env = "cyan"
-      }
-      pre_bootstrap_user_data = <<-EOT
-        #!/bin/bash
-        set -ex
-        cat <<-EOF > /etc/profile.d/bootstrap.sh
-        export USE_MAX_PODS=false
-        export KUBELET_EXTRA_ARGS="--max-pods=110"
-        EOF
-        # Source extra environment variables in bootstrap script
-        sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
-        EOT
     }
 
   }
@@ -122,7 +104,8 @@ module "irsa-ebs-csi" {
 resource "aws_eks_addon" "ebs-csi" {
   cluster_name             = module.eks.cluster_name
   addon_name               = "aws-ebs-csi-driver"
-  addon_version            = "v1.20.0-eksbuild.1"
+  # update this to v1.48.0-eksbuild.2
+  addon_version            = "v1.48.0-eksbuild.2"
   service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
   tags = {
     "eks_addon" = "ebs-csi"
